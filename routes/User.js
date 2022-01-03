@@ -263,7 +263,7 @@ router.post("/login", (req, res) => {
             .exec((Err, doc) => {
                 if (Err) res.json(error(Err))
                 else {
-                    if (info !== null) {
+                    if (doc !== null) {
                         if (req.body.password == decrypt(info.password)) {
 
                             const payload = { id: doc._id, name: doc.name }; // Create JWT Payload
@@ -373,17 +373,17 @@ router.post('/changepassword',passport.authenticate('jwt', { session: false }),(
 })
 
 
-router.get(
-    '/current',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
-        res.json({
-            id: req.user.id,
-            name: req.user.name,
-            email: req.user.email
-        });
-    }
-);
+// router.get(
+//     '/current',
+//     passport.authenticate('jwt', { session: false }),
+//     (req, res) => {
+//         res.json({
+//             id: req.user.id,
+//             name: req.user.name,
+//             email: req.user.email
+//         });
+//     }
+// );
 
 //getting the interests of user 
 router.post('/getinterest', passport.authenticate('jwt', { session: false }), (req, res) => {
