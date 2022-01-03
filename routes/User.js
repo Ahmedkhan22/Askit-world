@@ -178,7 +178,7 @@ router.post("/login", (req, res) => {
                 else {
                     if (info !== null) {
                         if (req.body.password == decrypt(info.password)) {
-                            res.json(Success(info._id,"user login successful"))
+                            res.json(Success(info,"user login successful"))
                         }
                         else {
                             res.json(error("failed","Incorrect Password"))
