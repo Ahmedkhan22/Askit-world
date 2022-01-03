@@ -158,7 +158,7 @@ router.post('/otpverify', async (req, res) => {
                               { expiresIn: 3600 },
                               (err, token) => {
                                 token= 'Bearer ' + token
-                                res.json(Success({token:token},"user verified"));
+                                res.json(Success({token:token,forgetpassword:true},"user verified"));
                               }
                             );
                                 }
@@ -208,7 +208,7 @@ router.post('/otpverify', async (req, res) => {
                               (err, token) => {
                                 token= 'Bearer ' + token
                                 console.log(token);
-                                res.json(Success({token:token},"user verified"));
+                                res.json(Success({token:token},"user created"));
                               }
                             );
                             }
