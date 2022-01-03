@@ -193,6 +193,8 @@ router.post("/login", (req, res) => {
 })
 //forget password 
 router.post('/forgetpassword', (req, res) => {
+    //for generating otp
+    const otp = otpGenerator.generate(4, { digits: true, upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false })
     if (req.body.email !== undefined) {
         user.findOne({ email: req.body.email })
             .exec((Err, info) => {
@@ -230,6 +232,7 @@ router.post('/forgetpassword', (req, res) => {
                 }
             })
     }
+    else res.json(error("failed","please enter email"))
 })
 //otp verify after forget password
 router.post('/otpafterforget', (req, res) => {
