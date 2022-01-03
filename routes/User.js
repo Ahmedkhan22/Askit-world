@@ -133,38 +133,61 @@ router.post('/signup', (req, res) => {
 //for verifying otp
 router.post('/otpverify', async (req, res) => {
  if (req.body.otp!== undefined) {
+       if (req.body.forgetpassword==true) {
         otpsave.findById(req.body.otpId)
-            .exec((Error, info) => {
-                if (Error) res.json(error(Error, "otp queery not worked"))
-                else {
-                    if (info !== null) {
-                        if (req.body.otp == info.otp) {
-                            console.log("otp===>",req.body.otp);
-                            console.log("otp===>",req.body.otpId);
-                            
-                            let obj = {
-                                name: req.body.userName,
-                                email: req.body.email,
-                                number: req.body.phone,
-                                DOB: req.body.DOB,
-                                gender: req.body.gender,
-                                password: encrypt(req.body.password)
-                            }
-                         
-                            user.create(obj, (err, doc) => {
-                                if (err) res.json(error(err, "user craetion failed"))
-                                else res.json(Success(doc, "user created"))
-                            })
-                        }
-                        else {
-                            res.json(error("failed","Insert Valid Otp"))
-                        }
+        .exec((Error, info) => {
+            if (Error) res.json(error(Error, "otp queery not worked"))
+            else {
+                if (info !== null) {
+                    if (req.body.otp == info.otp) {
+                        console.log("otp===>",req.body.otp);
+                        console.log("otp===>",req.body.otpId);
+                        res.json(Success("Success","Otp verified"))
                     }
                     else {
-                        res.json(error('failed', "send valid otp id"))
+                        res.json(error("failed","Insert Valid Otp"))
                     }
                 }
-            })
+                else {
+                    res.json(error('failed', "send valid otp id"))
+                }
+            }
+        })
+       }
+       else{
+        otpsave.findById(req.body.otpId)
+        .exec((Error, info) => {
+            if (Error) res.json(error(Error, "otp queery not worked"))
+            else {
+                if (info !== null) {
+                    if (req.body.otp == info.otp) {
+                        console.log("otp===>",req.body.otp);
+                        console.log("otp===>",req.body.otpId);
+                        
+                        let obj = {
+                            name: req.body.userName,
+                            email: req.body.email,
+                            number: req.body.phone,
+                            DOB: req.body.DOB,
+                            gender: req.body.gender,
+                            password: encrypt(req.body.password)
+                        }
+                     
+                        user.create(obj, (err, doc) => {
+                            if (err) res.json(error(err, "user craetion failed"))
+                            else res.json(Success(doc, "user created"))
+                        })
+                    }
+                    else {
+                        res.json(error("failed","Insert Valid Otp"))
+                    }
+                }
+                else {
+                    res.json(error('failed', "send valid otp id"))
+                }
+            }
+        })
+       }
     }
     else res.json(error("please enter otp"))
 })
