@@ -172,7 +172,7 @@ router.post('/otpverify', async (req, res) => {
 //login router
 router.post("/login", (req, res) => {
     if (req.body.email !== undefined && req.body.password!==undefined) {
-        user.findOne({ email: req.body.email },"_id")
+        user.findOne({ email: req.body.email },"_id password")
             .exec((Err, info) => {
                 if (Err) res.json(error(Err))
                 else {
