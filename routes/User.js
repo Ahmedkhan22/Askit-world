@@ -264,7 +264,7 @@ router.post("/login", (req, res) => {
                 if (Err) res.json(error(Err))
                 else {
                     if (doc !== null) {
-                        if (req.body.password == decrypt(info.password)) {
+                        if (req.body.password == decrypt(doc.password)) {
 
                             const payload = { id: doc._id, name: doc.name }; // Create JWT Payload
 
