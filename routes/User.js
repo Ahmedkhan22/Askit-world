@@ -198,7 +198,7 @@ router.post('/forgetpassword', (req, res) => {
     if (req.body.email !== undefined) {
         user.findOne({ email: req.body.email })
             .exec((Err, info) => {
-                if (Err) res.json(error(Err))
+                if (Err) res.json(error(Err,"error in finding user"))
                 else {
                     if (info !== null) {
                         //creating mail for otp
@@ -211,7 +211,7 @@ router.post('/forgetpassword', (req, res) => {
                         //sending mail with otp
                         transporter.sendMail(mailOptions, function (Error, info) {
                             if (Error) {
-                                res.json(error(Error));
+                                res.json(error(Error,"email not send"));
                             } else {
                                 let obj = {
                                     mail: req.body.email,
@@ -220,15 +220,15 @@ router.post('/forgetpassword', (req, res) => {
                                 console.log('Email sent: ' + info.response);
                                 otpsave.create(obj, (err, doc) => {
                                     if (err) {
-                                        res.json(error(err))
+                                        res.json(error(err,"otp creation failed"))
                                     } else {
-                                        res.json(Success(doc))
+                                        res.json(Success(doc,"An otp is send to your email"))
                                     }
                                 })
                             }
                         })
                     }
-                    else res.json(error("user not found"))
+                    else res.json(error("failed","User not found"))
                 }
             })
     }
