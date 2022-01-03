@@ -147,7 +147,12 @@ router.post('/otpverify', async (req, res) => {
                         user.findOne({email:req.body.email},"_id")
                         .exec((err,doc)=>{
                             if (err) res.json(error(err,"error in finding user"))
-                            else res.json(Success(doc,"Otp verified"))
+                            else {
+                                if(doc!==null){
+                                    res.json(Success(doc,"Otp verified"))
+                                }
+                                else res.json(error("failed","user not found"))
+                            }
                         })
                     }
                     else {
