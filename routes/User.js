@@ -135,7 +135,7 @@ router.post('/signup', (req, res) => {
 //for verifying otp
 router.post('/otpverify', async (req, res) => {
  if (req.body.otp!== undefined) {
-       if (req.body.forgetpassword==true) {
+    //    if (req.body.forgetpassword==true) {
         otpsave.findById(req.body.otpId)
         .exec((Error, info) => {
             if (Error) res.json(error(Error, "otp queery not worked"))
@@ -162,7 +162,35 @@ router.post('/otpverify', async (req, res) => {
                               }
                             );
                                 }
-                                else res.json(error("failed","user not found"))
+                                else {
+                                    let obj = {
+                                                                name: req.body.userName,
+                                                                email: req.body.email,
+                                                                number: req.body.phone,
+                                                                DOB: req.body.DOB,
+                                                                gender: req.body.gender,
+                                                                password: encrypt(req.body.password)
+                                                            }
+                                                         
+                                                            user.create(obj, (err, doc) => {
+                                                                if (err) res.json(error(err, "user craetion failed"))
+                                                                else {
+                                                                    const payload = { id: info._id, name: info.name}; // Create JWT Payload
+                                    
+                                                                // Sign Token
+                                                                jwt.sign(
+                                                                  payload,
+                                                                  keys.secretOrKey,
+                                                                  { expiresIn: 3600 },
+                                                                  (err, token) => {
+                                                                    token= 'Bearer ' + token
+                                                                    console.log(token);
+                                                                    res.json(Success({token:token},"user created"));
+                                                                  }
+                                                                );
+                                                                }
+                                                            })
+                                }
                             }
                         })
                     }
@@ -175,55 +203,55 @@ router.post('/otpverify', async (req, res) => {
                 }
             }
         })
-       }
-       else if (req.body.forgetpassword==undefined && req.body.otpId!== undefined){
-        otpsave.findById(req.body.otpId)
-        .exec((Error, info) => {
-            if (Error) res.json(error(Error, "otp queery not worked"))
-            else {
-                if (info !== null) {
-                    if (req.body.otp == info.otp) {
-                        console.log("otp===>",req.body.otp);
-                        console.log("otp===>",req.body.otpId);
+    //    }
+    //    else if (req.body.forgetpassword==undefined && req.body.otpId!== undefined){
+    //     otpsave.findById(req.body.otpId)
+    //     .exec((Error, info) => {
+    //         if (Error) res.json(error(Error, "otp queery not worked"))
+    //         else {
+    //             if (info !== null) {
+    //                 if (req.body.otp == info.otp) {
+    //                     console.log("otp===>",req.body.otp);
+    //                     console.log("otp===>",req.body.otpId);
                         
-                        let obj = {
-                            name: req.body.userName,
-                            email: req.body.email,
-                            number: req.body.phone,
-                            DOB: req.body.DOB,
-                            gender: req.body.gender,
-                            password: encrypt(req.body.password)
-                        }
+    //                     let obj = {
+    //                         name: req.body.userName,
+    //                         email: req.body.email,
+    //                         number: req.body.phone,
+    //                         DOB: req.body.DOB,
+    //                         gender: req.body.gender,
+    //                         password: encrypt(req.body.password)
+    //                     }
                      
-                        user.create(obj, (err, doc) => {
-                            if (err) res.json(error(err, "user craetion failed"))
-                            else {
-                                const payload = { id: info._id, name: info.name}; // Create JWT Payload
+    //                     user.create(obj, (err, doc) => {
+    //                         if (err) res.json(error(err, "user craetion failed"))
+    //                         else {
+    //                             const payload = { id: info._id, name: info.name}; // Create JWT Payload
 
-                            // Sign Token
-                            jwt.sign(
-                              payload,
-                              keys.secretOrKey,
-                              { expiresIn: 3600 },
-                              (err, token) => {
-                                token= 'Bearer ' + token
-                                console.log(token);
-                                res.json(Success({token:token},"user created"));
-                              }
-                            );
-                            }
-                        })
-                    }
-                    else {
-                        res.json(error("failed","Insert Valid Otp"))
-                    }
-                }
-                else {
-                    res.json(error('failed', "send valid otp id"))
-                }
-            }
-        })
-       }
+    //                         // Sign Token
+    //                         jwt.sign(
+    //                           payload,
+    //                           keys.secretOrKey,
+    //                           { expiresIn: 3600 },
+    //                           (err, token) => {
+    //                             token= 'Bearer ' + token
+    //                             console.log(token);
+    //                             res.json(Success({token:token},"user created"));
+    //                           }
+    //                         );
+    //                         }
+    //                     })
+    //                 }
+    //                 else {
+    //                     res.json(error("failed","Insert Valid Otp"))
+    //                 }
+    //             }
+    //             else {
+    //                 res.json(error('failed', "send valid otp id"))
+    //             }
+    //         }
+    //     })
+    //    }
     }
     else res.json(error("please enter otp"))
 })
