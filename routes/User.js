@@ -285,7 +285,7 @@ router.post('/forgetpassword', (req, res) => {
                                 res.json(error(Error,"email not send"));
                             } else {
                                 let obj = {
-                                    email: req.body.email,
+                                    mail: req.body.email,
                                     otp: otp
                                 }
                                 console.log('Email sent: ' + info.response);
@@ -293,6 +293,7 @@ router.post('/forgetpassword', (req, res) => {
                                     if (err) {
                                         res.json(error(err,"otp creation failed"))
                                     } else {
+                                        // console.log(email);
                                         res.json(Success(doc,"An otp is send to your email"))
                                     }
                                 })
