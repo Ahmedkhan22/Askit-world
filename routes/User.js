@@ -110,6 +110,7 @@ router.post('/signup', (req, res) => {
                                 console.log("otp===>",otp);
                                 otpsave.create(obj, (err, doc) => {
                                     if (err) {
+                                        console.log(err);
                                         res.json(error(err, "otp creation failed"))
                                     } else {
                                         res.json(Success(doc, "An otp send to your email"))
