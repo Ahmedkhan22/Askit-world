@@ -134,7 +134,7 @@ router.post('/signup', (req, res) => {
 
 //for verifying otp
 router.post('/otpverify', async (req, res) => {
- if (req.body.otp!== undefined && req.body.otpId!== undefined) {
+ if (req.body.otp!== undefined) {
        if (req.body.forgetpassword==true) {
         otpsave.findById(req.body.otpId)
         .exec((Error, info) => {
@@ -160,7 +160,7 @@ router.post('/otpverify', async (req, res) => {
             }
         })
        }
-       else{
+       else if (req.body.forgetpassword==undefined && req.body.otpId!== undefined){
         otpsave.findById(req.body.otpId)
         .exec((Error, info) => {
             if (Error) res.json(error(Error, "otp queery not worked"))
