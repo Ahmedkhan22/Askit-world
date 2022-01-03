@@ -267,13 +267,14 @@ router.post("/login", (req, res) => {
                         if (req.body.password == decrypt(doc.password)) {
 
                             const payload = { id: doc._id, name: doc.name }; // Create JWT Payload
-
+                            
                             // Sign Token
                             jwt.sign(
                                 payload,
                                 keys.secretOrKey,
                                 { expiresIn: 3600 },
                                 (err, token) => {
+                                    token = 'Bearer ' + token
                                     res.json(Success({ token: token }, "Login Succefull"));
                                 }
                             );
