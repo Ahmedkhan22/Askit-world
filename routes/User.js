@@ -142,7 +142,11 @@ router.post('/otpverify', async (req, res) => {
                     if (req.body.otp == info.otp) {
                         console.log("otp===>",req.body.otp);
                         console.log("otp===>",req.body.otpId);
-                        res.json(Success("Success","Otp verified"))
+                        user.findOne({email:req.body.email},"_id")
+                        .exec((err,doc)=>{
+                            if (err) res.json(error(err,"error in finding user"))
+                            else res.json(Success(doc,"Otp verified"))
+                        })
                     }
                     else {
                         res.json(error("failed","Insert Valid Otp"))
