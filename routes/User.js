@@ -12,7 +12,9 @@ const error = require('../handle funtion/error')
 const Success = require('../handle funtion/success');
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
-
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const keys = {secretOrKey: 'secret'}
 
 
 // for encryption 
@@ -132,7 +134,7 @@ router.post('/signup', (req, res) => {
 
 //for verifying otp
 router.post('/otpverify', async (req, res) => {
- if (req.body.otp!== undefined) {
+ if (req.body.otp!== undefined && req.body.otpId!== undefined) {
        if (req.body.forgetpassword==true) {
         otpsave.findById(req.body.otpId)
         .exec((Error, info) => {
@@ -205,7 +207,22 @@ router.post("/login", (req, res) => {
                 else {
                     if (info !== null) {
                         if (req.body.password == decrypt(info.password)) {
-                            res.json(Success(info,"user login successful"))
+
+                            const payload = { id: info._id, name: info.name}; // Create JWT Payload
+
+                            // Sign Token
+                            jwt.sign(
+                              payload,
+                              keys.secretOrKey,
+                              { expiresIn: 3600 },
+                              (err, token) => {
+                                res.json({
+                                  success: true,
+                                  token: 'world_Askit ' + token
+                                });
+                              }
+                            );
+                            // res.json(Success(info,"user login successful"))
                         }
                         else {
                             res.json(error("failed","Incorrect Password"))
@@ -300,7 +317,7 @@ router.post('/changepassword', (req, res) => {
 })
 
 //getting the interests of user 
-router.post('/getinterest', (req, res) => {
+router.post('/getinterest', passport.authenticate('jwt', { session: false }), (req, res) => {
     if (req.body.interest !== undefined) {
         user.findByIdAndUpdate(req.body.userid, { interests: req.body.interest }, { new: true })
             .exec((err, doc) => {
