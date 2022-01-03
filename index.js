@@ -121,5 +121,7 @@ cron.schedule('0 59 23 * * *', () => {
         else console.log("poll status are updated",doc);
     })
 });
+
+app.post('/',(req,res)=> res.json("welcome mote"))
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => { console.log(`Server started at port ${PORT}`) })
