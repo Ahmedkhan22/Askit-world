@@ -14,7 +14,7 @@ db.on('open', () => {
     console.log('database connected')
 })
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
-
+const passport = require('passport');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -22,6 +22,12 @@ app.use("/user", require('./routes/User'))
 app.use("/post", require('./routes/post'))
 app.use("/answer", require('./routes/comment'))
 app.use("/category", require('./routes/category'))
+
+// Passport middleware
+app.use(passport.initialize());
+
+// Passport Config
+require('./config/passport')(passport);
 
 
 //creating cron job for refreshing daily trandings 

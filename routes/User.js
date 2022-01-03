@@ -149,7 +149,18 @@ router.post('/otpverify', async (req, res) => {
                             if (err) res.json(error(err,"error in finding user"))
                             else {
                                 if(doc!==null){
-                                    res.json(Success(doc,"Otp verified"))
+                                    const payload = { id: info._id, name: info.name}; // Create JWT Payload
+
+                            // Sign Token
+                            jwt.sign(
+                              payload,
+                              keys.secretOrKey,
+                              { expiresIn: 3600 },
+                              (err, token) => {
+                                token= 'Bearer ' + token
+                                res.json(Success({token:token},"user verified"));
+                              }
+                            );
                                 }
                                 else res.json(error("failed","user not found"))
                             }
@@ -186,7 +197,21 @@ router.post('/otpverify', async (req, res) => {
                      
                         user.create(obj, (err, doc) => {
                             if (err) res.json(error(err, "user craetion failed"))
-                            else res.json(Success(doc, "user created"))
+                            else {
+                                const payload = { id: info._id, name: info.name}; // Create JWT Payload
+
+                            // Sign Token
+                            jwt.sign(
+                              payload,
+                              keys.secretOrKey,
+                              { expiresIn: 3600 },
+                              (err, token) => {
+                                token= 'Bearer ' + token
+                                console.log(token);
+                                res.json(Success({token:token},"user verified"));
+                              }
+                            );
+                            }
                         })
                     }
                     else {
@@ -221,10 +246,7 @@ router.post("/login", (req, res) => {
                               keys.secretOrKey,
                               { expiresIn: 3600 },
                               (err, token) => {
-                                res.json({
-                                  success: true,
-                                  token: 'world_Askit ' + token
-                                });
+                                res.json(Success({token:token},"Login Succefull"));
                               }
                             );
                             // res.json(Success(info,"user login successful"))
@@ -263,7 +285,7 @@ router.post('/forgetpassword', (req, res) => {
                                 res.json(error(Error,"email not send"));
                             } else {
                                 let obj = {
-                                    mail: req.body.email,
+                                    email: req.body.email,
                                     otp: otp
                                 }
                                 console.log('Email sent: ' + info.response);
@@ -321,13 +343,26 @@ router.post('/changepassword', (req, res) => {
     }
 })
 
+
+router.get(
+    '/current',
+    passport.authenticate('jwt', { session: false }),
+    (req, res) => {
+      res.json({
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email
+      });
+    }
+  );
+
 //getting the interests of user 
 router.post('/getinterest', passport.authenticate('jwt', { session: false }), (req, res) => {
     if (req.body.interest !== undefined) {
-        user.findByIdAndUpdate(req.body.userid, { interests: req.body.interest }, { new: true })
+        user.findByIdAndUpdate(req.user.id, { interests: req.body.interest }, { new: true })
             .exec((err, doc) => {
-                if (err) res.json(error(err))
-                else res.json(Success(doc))
+                if (err) res.json(error(err,"error in Api"))
+                else res.json(Success(doc,"Personalizing your newsfeed"))
             })
     }
 })
