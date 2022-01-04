@@ -11,7 +11,7 @@ const keys = { secretOrKey: 'secret' }
 //category schema
 const cat = require("../schema/category");
 //add a post
-router.post('/addpost', (req, res) => {
+router.post('/addpost', passport.authenticate('jwt', { session: false }),(req, res) => {
     let data = req.body
     data.postby=req.user.id
     let today = new Date()
