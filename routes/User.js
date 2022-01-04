@@ -283,7 +283,7 @@ router.post("/login", (req, res) => {
                         else {
                             res.json(error("failed", "Incorrect Password"))
                         }
-                    }
+                    } 
                     else res.json(error("failed", "user not found"))
                 }
             })
@@ -397,18 +397,18 @@ router.post('/getinterest', passport.authenticate('jwt', { session: false }), (r
     }
 })
 //home page for user 
-router.post('/homepage', (req, res) => {
+router.post('/homepage',passport.authenticate('jwt', { session: false }), (req, res) => {
     if (req.body.topic !== undefined) {
         post.find({ category: req.body.topic })
             .populate("postby", "name followers")
             .populate('shared_post.$*')
             .exec((err, doc) => {
-                if (err) res.json(error(err))
-                else res.json(Success(doc))
+                if (err) res.json(error(err,"error in topic api"))
+                else res.json(Success(doc,"Posts of Treding topic"))
             })
     }
     else {
-        user.findById(req.body.userid)
+        user.findById(req.user.id)
             .exec((Err, info) => {
                 if (Err) res.json(Err)
                 else {
@@ -416,9 +416,8 @@ router.post('/homepage', (req, res) => {
                         .populate("postby", "name followers")
                         .populate('shared_post.$*')
                         .exec((err, doc) => {
-
-                            if (err) res.json(error(err))
-                            else res.json(Success(doc))
+                            if (err) res.json(error(err,"error in user API"))
+                            else res.json(Success(doc,"posts are found"))
                         })
                 }
             })
