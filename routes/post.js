@@ -5,26 +5,29 @@ const Success = require('../handle funtion/success');
 const comment = require("../schema/comment");
 const post = require('../schema/posts');
 const user = require("../schema/User");
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const keys = { secretOrKey: 'secret' }
 //category schema
 const cat = require("../schema/category");
 //add a post
 router.post('/addpost', (req, res) => {
     let data = req.body
+    data.postby=req.user.id
     let today = new Date()
     let priorDate = new Date().setDate(today.getDate() + req.body.end_date)
     let end_dat = new Date(priorDate)
     if (req.body.poll !== true) {
         post.create(data, (err, doc) => {
-            if (err) res.json(error(err))
+            if (err) res.json(error(err,"poll creation failed"))
             else {
                 doc.category.forEach(element => {
                     cat.findOneAndUpdate({ name: element }, { $inc: { today_count: 1 } })
                         .exec((Err, info) => {
-                            if (Err) res.json(error(Err))
+                            if (Err) res.json(error(Err,"cat Categroy not found API error"))
                             else {
                                 if(info!==null){
-                                    console.log("step6");
-                                    res.json(Success(doc))
+                                    res.json(Success(doc,"Post shared"))
                                 }
                                 else{
                                     const obj={
@@ -32,8 +35,8 @@ router.post('/addpost', (req, res) => {
                                         today_count:1
                                     }
                                     cat.create(obj,(Error,Doc)=>{
-                                        if(Error) res.json(error(Error))
-                                        else res.json(Success(doc))
+                                        if(Error) res.json(error(Error,"cat Categroy not found API error"))
+                                        else res.json(Success(doc,"Post shared"))
                                     })
                                 }
                             }
@@ -44,7 +47,7 @@ router.post('/addpost', (req, res) => {
     }
     else if (req.body.poll !== false) {
         let obj = {
-            postby: req.body.postby,
+            postby: req.user.postby,
             text: req.body.text,
             category: req.body.category,
             poll: req.body.poll,
@@ -58,15 +61,15 @@ router.post('/addpost', (req, res) => {
             }
         }
         post.create(obj, (err, doc) => {
-            if (err) res.json(error(err))
+            if (err) res.json(error(err,"poll creation failed"))
             else {
                 doc.category.forEach(element => {
                     cat.findOneAndUpdate({ name: element }, { $inc: { today_count: 1 } })
                         .exec((Err, info) => {
-                            if (Err) res.json(Err)
+                            if (Err) res.json(Err,"cat Categroy not found API error")
                             else {
                                 if(info!==null){
-                                    res.json(Success(doc))
+                                    res.json(Success(doc,"Post shared"))
                                 }
                                 else{
                                     let obj={
@@ -74,8 +77,8 @@ router.post('/addpost', (req, res) => {
                                         today_count:1
                                     }
                                     cat.create(obj,(Error,Doc)=>{
-                                        if(Error) res.json(error(Error))
-                                        else res.json(Success(doc))
+                                        if(Error) res.json(error(Error,"cat Categroy not found API error"))
+                                        else res.json(Success(doc,"Post shared"))
                                     })
                                 }
                             }
