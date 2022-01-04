@@ -163,11 +163,17 @@ router.post('/otpverify', async (req, res) => {
                                             );
                                         }
                                         else {
+                                            const avatar = gravatar.url(req.body.email, {
+                                                s: '200', // Size
+                                                r: 'pg', // Rating
+                                                d: 'mm' // Default
+                                              });
                                             let obj = {
                                                 name: req.body.userName,
                                                 email: req.body.email,
                                                 number: req.body.phone,
                                                 DOB: req.body.DOB,
+                                                picutre:avatar,
                                                 gender: req.body.gender,
                                                 password: encrypt(req.body.password)
                                             }
