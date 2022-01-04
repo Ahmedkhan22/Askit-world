@@ -13,6 +13,7 @@ const Success = require('../handle funtion/success');
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
 const jwt = require('jsonwebtoken');
+const gravatar = require('gravatar');
 const passport = require('passport');
 const keys = { secretOrKey: 'secret' }
 
