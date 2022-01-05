@@ -19,7 +19,6 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }),(req, r
     let end_dat = new Date(priorDate)
     if (req.body.poll !== true) {
         if(data.annonymous==true){
-            data.text=req.body.question
             post.create(data, (err, doc) => {
                 if (err) res.json(error(err,"poll creation failed"))
                 else {
@@ -49,7 +48,6 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }),(req, r
         }
         else{
             data.postby=req.user.id
-            data.text=req.body.question
             post.create(data, (err, doc) => {
                 if (err) res.json(error(err,"poll creation failed"))
                 else {
@@ -83,7 +81,7 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }),(req, r
         let obj = {
             annonymous:data.annonymous? true:false,
             postby: req.user.id,
-            text: req.body.question,
+            question: req.body.question,
             category: req.body.category,
             poll: req.body.poll,
             poll_detail: {

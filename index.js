@@ -117,7 +117,8 @@ console.log(file);
 
 
 //deactivating poll
-const post=require('./schema/posts')
+const post=require('./schema/posts');
+const Categroy = require('./nlp/model');
 const date= new Date()
 // console.log(date);
 cron.schedule('0 59 23 * * *', () => {
@@ -127,6 +128,10 @@ cron.schedule('0 59 23 * * *', () => {
         else console.log("poll status are updated",doc);
     })
 });
+
+
+
+console.log(Categroy.classify("white lives matter"));
 
 app.get('/',(req,res)=> res.json("welcome mote"))
 const PORT = process.env.PORT || 3000

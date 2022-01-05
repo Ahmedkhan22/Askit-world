@@ -1,0 +1,85 @@
+{
+    "classifier": {
+        "classFeatures": {
+            "night": {
+                "0": 2,
+                "1": 2,
+                "2": 2,
+                "3": 2
+            },
+            "day": {
+                "2": 2,
+                "4": 2,
+                "5": 2
+            },
+            "racixam": {
+                "6": 2,
+                "7": 2
+            }
+        },
+        "classTotals": {
+            "night": 4,
+            "day": 3,
+            "racixam": 2
+        },
+        "totalExamples": 7,
+        "smoothing": 1
+    },
+    "docs": [
+        {
+            "label": "night",
+            "text": [
+                "start"
+            ]
+        },
+        {
+            "label": "night",
+            "text": [
+                "moon",
+                "sky"
+            ]
+        },
+        {
+            "label": "night",
+            "text": [
+                "dark"
+            ]
+        },
+        {
+            "label": "day",
+            "text": [
+                "sun",
+                "sky"
+            ]
+        },
+        {
+            "label": "day",
+            "text": [
+                "bright"
+            ]
+        },
+        {
+            "label": "racixam",
+            "text": [
+                "black",
+                "live"
+            ]
+        }
+    ],
+    "features": {
+        "start": 1,
+        "moon": 1,
+        "sky": 2,
+        "dark": 1,
+        "sun": 1,
+        "bright": 1,
+        "black": 1,
+        "live": 1
+    },
+    "stemmer": {},
+    "lastAdded": 6,
+    "events": {
+        "_events": {},
+        "_eventsCount": 0
+    }
+}

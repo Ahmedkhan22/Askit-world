@@ -65,7 +65,7 @@ const PostModel = mongoose.Schema({
         type:Number,
         default:0
     },
-    text: {
+    question: {
         type: String
     },
     category: {
