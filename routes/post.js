@@ -11,33 +11,33 @@ const keys = { secretOrKey: 'secret' }
 //category schema
 const cat = require("../schema/category");
 //add a post
-router.post('/addpost', passport.authenticate('jwt', { session: false }),(req, res) => {
+router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, res) => {
     let data = req.body
-    data.postby=req.user.id
+    data.postby = req.user.id
     let today = new Date()
     let priorDate = new Date().setDate(today.getDate() + req.body.end_date)
     let end_dat = new Date(priorDate)
     if (req.body.poll !== true) {
-        if(data.annonymous==true){
+        if (data.annonymous == true) {
             post.create(data, (err, doc) => {
-                if (err) res.json(error(err,"poll creation failed"))
+                if (err) res.json(error(err, "poll creation failed"))
                 else {
                     doc.category.forEach(element => {
                         cat.findOneAndUpdate({ name: element }, { $inc: { today_count: 1 } })
                             .exec((Err, info) => {
-                                if (Err) res.json(error(Err,"cat Categroy not found API error"))
+                                if (Err) res.json(error(Err, "cat Categroy not found API error"))
                                 else {
-                                    if(info!==null){
-                                        res.json(Success(doc,"Post shared annonumously"))
+                                    if (info !== null) {
+                                        res.json(Success(doc, "Post shared annonumously"))
                                     }
-                                    else{
-                                        const obj={
-                                            name:element,
-                                            today_count:1
+                                    else {
+                                        const obj = {
+                                            name: element,
+                                            today_count: 1
                                         }
-                                        cat.create(obj,(Error,Doc)=>{
-                                            if(Error) res.json(error(Error,"cat Categroy not found API error"))
-                                            else res.json(Success(doc,"Post shared"))
+                                        cat.create(obj, (Error, Doc) => {
+                                            if (Error) res.json(error(Error, "cat Categroy not found API error"))
+                                            else res.json(Success(doc, "Post shared"))
                                         })
                                     }
                                 }
@@ -46,69 +46,67 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }),(req, r
                 }
             })
         }
-        else{
-            data.postby=req.user.id
+        else {
+            data.postby = req.user.id
             post.create(data, (err, doc) => {
-                if (err) res.json(error(err,"poll creation failed"))
+                if (err) res.json(error(err, "poll creation failed"))
                 else {
-                    doc.category.forEach(element => {
-                        cat.findOneAndUpdate({ name: element }, { $inc: { today_count: 1 } })
-                            .exec((Err, info) => {
-                                if (Err) res.json(error(Err,"cat Categroy not found API error"))
-                                else {
-                                    if(info!==null){
-                                        res.json(Success(doc,"Post shared"))
-                                    }
-                                    else{
-                                        const obj={
-                                            name:element,
-                                            today_count:1
-                                        }
-                                        cat.create(obj,(Error,Doc)=>{
-                                            if(Error) res.json(error(Error,"cat Categroy not found API error"))
-                                            else res.json(Success(doc,"Post shared"))
-                                        })
-                                    }
+                    cat.updateMany({ name: { $in: data.category } }, { $inc: { today_count: 1 } })
+                        .exec((Err, info) => {
+                            if (Err) res.json(error(Err, "cat Categroy not found API error"))
+                            else {
+                                if (info !== null) {
+                                    res.json(Success(doc,"Post is shared"))
                                 }
-                            })
-                    })
+                                else {
+                                    const obj = {
+                                        name: element,
+                                        today_count: 1
+                                    }
+                                    cat.create(obj, (Error, Doc) => {
+                                        if (Error) res.json(error(Error, "cat Categroy not found API error"))
+                                        else res.json(Success(doc, "Post is shared"))
+                                    })
+                                }
+                            }
+                        })
                 }
             })
         }
     }
     else if (req.body.poll !== false) {
-        let data=req.body
+        let data = req.body
         let obj = {
-            annonymous:data.annonymous? true:false,
+            annonymous: data.annonymous ? true : false,
             postby: req.user.id,
             question: req.body.question,
             category: req.body.category,
             poll: req.body.poll,
             poll_detail: {
-                choice:req.body.choiceArray,
+                choice: req.body.choiceArray,
                 poll_status: true,
                 end_date: end_dat
             }
         }
         post.create(obj, (err, doc) => {
-            if (err) res.json(error(err,"poll creation failed"))
+            if (err) res.json(error(err, "poll creation failed"))
             else {
                 doc.category.forEach(element => {
                     cat.findOneAndUpdate({ name: element }, { $inc: { today_count: 1 } })
                         .exec((Err, info) => {
-                            if (Err) res.json(Err,"cat Categroy not found API error")
+                            if (Err) res.json(Err, "cat Categroy not found API error")
                             else {
-                                if(info!==null){
-                                    res.json(Success(doc,"Post shared"))
+                                if (info !== null) {
+                                    res.json(Success(doc, "Post shared"))
                                 }
-                                else{
-                                    let obj={
-                                        name:element,
-                                        today_count:1
+                                else {
+                                    let obj = {
+                                        name: element,
+                                        today_count: 1
                                     }
-                                    cat.create(obj,(Error,Doc)=>{
-                                        if(Error) res.json(error(Error,"cat Categroy not found API error"))
-                                        else res.json(Success(doc,"Post shared"))
+                                    cat.create(obj, (Error, Doc) => {
+                                        if (Error) res.json(error(Error, "cat Categroy not found API error"))
+                                        else res.json(Success(doc, "Post shared"))
                                     })
                                 }
                             }
@@ -120,14 +118,14 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }),(req, r
 })
 
 //if any user share a post
-router.post('/share',(req,res)=>{
-    let obj={
-        postby:req.body.postby,
-        shared_post:req.body.postid,
-        shared:true
+router.post('/share', (req, res) => {
+    let obj = {
+        postby: req.body.postby,
+        shared_post: req.body.postid,
+        shared: true
     }
-    post.create(obj,(err,doc)=>{
-        if(err) res.json(error(err))
+    post.create(obj, (err, doc) => {
+        if (err) res.json(error(err))
         else res.json(Success(doc))
     })
 })
