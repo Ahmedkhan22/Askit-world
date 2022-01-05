@@ -28,7 +28,7 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }),(req, r
                                 if (Err) res.json(error(Err,"cat Categroy not found API error"))
                                 else {
                                     if(info!==null){
-                                        res.json(Success(doc,"Post shared"))
+                                        res.json(Success(doc,"Post shared annonumously"))
                                     }
                                     else{
                                         const obj={
