@@ -168,13 +168,13 @@ router.post('/otpverify', async (req, res) => {
                                                 s: '200', // Size
                                                 r: 'pg', // Rating
                                                 d: 'mm' // Default
-                                              });
+                                            });
                                             let obj = {
                                                 name: req.body.userName,
                                                 email: req.body.email,
                                                 number: req.body.phone,
                                                 DOB: req.body.DOB,
-                                                picutre:avatar,
+                                                picutre: avatar,
                                                 gender: req.body.gender,
                                                 password: encrypt(req.body.password)
                                             }
@@ -274,7 +274,7 @@ router.post("/login", (req, res) => {
                         if (req.body.password == decrypt(doc.password)) {
 
                             const payload = { id: doc._id, name: doc.name }; // Create JWT Payload
-                            
+
                             // Sign Token
                             jwt.sign(
                                 payload,
@@ -290,7 +290,7 @@ router.post("/login", (req, res) => {
                         else {
                             res.json(error("failed", "Incorrect Password"))
                         }
-                    } 
+                    }
                     else res.json(error("failed", "user not found"))
                 }
             })
@@ -370,12 +370,12 @@ router.post('/forgetpassword', (req, res) => {
 // })
 
 //after verifying forget password otp
-router.post('/changepassword',passport.authenticate('jwt', { session: false }),(req, res) => {
+router.post('/changepassword', passport.authenticate('jwt', { session: false }), (req, res) => {
     if (req.body.password !== undefined) {
         user.findByIdAndUpdate(req.user.id, { password: encrypt(req.body.password) }, { new: true })
             .exec((err, doc) => {
-                if (err) res.json(error(err,"Api Error"))
-                else res.json(Success(doc,"Password Succefully changed"))
+                if (err) res.json(error(err, "Api Error"))
+                else res.json(Success(doc, "Password Succefully changed"))
             })
     }
 })
@@ -404,27 +404,43 @@ router.post('/getinterest', passport.authenticate('jwt', { session: false }), (r
     }
 })
 //home page for user 
-router.post('/homepage',passport.authenticate('jwt', { session: false }), (req, res) => {
+router.post('/homepage', passport.authenticate('jwt', { session: false }), (req, res) => {
     if (req.body.topic !== undefined) {
-        post.find({ category: req.body.topic })
-            .populate("postby", "name followers")
-            .populate('shared_post.$*')
+        post.aggregate([
+            { $match: { category: req.body.topic } }
+        ])
+            // .populate("postby", "name followers")
+            // .populate('shared_post.$*')
             .exec((err, doc) => {
-                if (err) res.json(error(err,"error in topic api"))
-                else res.json(Success(doc,"Posts of Treding topic"))
+                if (err) res.json(error(err, "error in topic api"))
+                else res.json(Success(doc, "Posts of Treding topic"))
             })
     }
     else {
+        let date = new Date()
         user.findById(req.user.id)
             .exec((Err, info) => {
                 if (Err) res.json(Err)
                 else {
-                    post.find({ $or: [{ category: { $in: info.interests } }, { postby: { $in: info.following } }] })
-                        .populate("postby", "name followers")
-                        .populate('shared_post.$*')
+                    post.aggregate([
+                        { $match: { $or: [{ category: { $in: info.interests } }, { postby: { $in: info.following } }] } }
+                        , {
+                            $project: {
+                                year: {
+                                    $dateDiff: {
+                                        startDate: "$created_date",
+                                        endDate: date,
+                                        unit: "minute"
+                                    }
+                                }
+                            }
+                        }
+                    ])
+                        // .populate("postby", "name followers")
+                        // .populate('shared_post.$*')
                         .exec((err, doc) => {
-                            if (err) res.json(error(err,"error in user API"))
-                            else res.json(Success(doc,"posts are found"))
+                            if (err) console.log(error(err, "error in user API"))
+                            else res.json(Success(doc, "posts are found"))
                         })
                 }
             })
@@ -457,7 +473,7 @@ router.post('/singleuser', (req, res) => {
     if (req.body.token !== req.body.userid) {
         user.findById(req.body.userid, "name address followers following description")
             .exec((Err, info) => {
-                if (Err) res.json(error(Err))
+                if (Err) console.log(error("sss====", Error))
                 else {
                     if (req.body.require == "Top") {
                         post.find({ $and: [{ postby: req.body.userid }, { annonymous: false }] })
@@ -467,7 +483,7 @@ router.post('/singleuser', (req, res) => {
                             .populate("shared_post.postby", 'name picture')
                             .select('postby shared_post text total_react Comments total_comment total_shares created_date')
                             .exec((Error, result) => {
-                                if (Error) res.json(error(Error))
+                                if (Error) console.log(error("ccccc====", Error))
                                 else {
                                     user.aggregate([
                                         { $match: { _id: new ObjectId(req.body.userid) } }
@@ -525,7 +541,7 @@ router.post('/singleuser', (req, res) => {
                                         }
                                     ])
                                         .exec((Er, response) => {
-                                            if (Er) res.json(Er)
+                                            if (Er) console.log(error("aaaa=====", Error))
                                             else {
                                                 let obj = {
                                                     name: info.name,
@@ -549,7 +565,7 @@ router.post('/singleuser', (req, res) => {
                             .populate("shared_post.postby", 'name picture')
                             .select('postby shared_post text total_react Comments total_comment total_shares created_date')
                             .exec((Error, result) => {
-                                if (Error) res.json(error(Error))
+                                if (Error) console.log(error("www======", Error))
                                 else {
                                     user.aggregate([
                                         { $match: { _id: new ObjectId(req.body.userid) } }
@@ -607,7 +623,7 @@ router.post('/singleuser', (req, res) => {
                                         }
                                     ])
                                         .exec((Er, response) => {
-                                            if (Er) res.json(Er)
+                                            if (Er) console.log(error("rrr===", Error))
                                             else {
                                                 let obj = {
                                                     name: info.name,
@@ -629,7 +645,7 @@ router.post('/singleuser', (req, res) => {
     else if (req.body.token == req.body.userid) {
         user.findById(req.body.userid, "name address followers following description")
             .exec((Err, info) => {
-                if (Err) res.json(error(Err))
+                if (Err) console.log(error("qqqqq", Error))
                 else {
                     if (req.body.require == "Top") {
                         post.find({ postby: req.body.userid })
@@ -639,7 +655,7 @@ router.post('/singleuser', (req, res) => {
                             .populate("shared_post.postby", 'name picture')
                             .select('postby shared_post annonymous text total_react Comments total_comment total_shares created_date')
                             .exec((Error, result) => {
-                                if (Error) res.json(error(Error))
+                                if (Error) console.log(error("ttttt", Error))
                                 else {
                                     user.aggregate([
                                         { $match: { _id: new ObjectId(req.body.userid) } }
@@ -697,7 +713,7 @@ router.post('/singleuser', (req, res) => {
                                         }
                                     ])
                                         .exec((Er, response) => {
-                                            if (Er) res.json(Er)
+                                            if (Er) console.log(error(Er, "bbbbb"))
                                             else {
                                                 let obj = {
                                                     name: info.name,
@@ -729,7 +745,7 @@ router.post('/singleuser', (req, res) => {
                             // .populate("shared_post.postby",'name picture')
                             .select('postby shared_post annonymous text total_react Comments total_comment total_shares created_date')
                             .exec((Error, result) => {
-                                if (Error) res.json(error(Error))
+                                if (Error) console.log(error("jjjj", Error))
                                 else {
                                     user.aggregate([
                                         { $match: { _id: new ObjectId(req.body.userid) } }
@@ -787,7 +803,7 @@ router.post('/singleuser', (req, res) => {
                                         }
                                     ])
                                         .exec((Er, response) => {
-                                            if (Er) res.json(Er)
+                                            if (Er) console.log(error("llllll", Error))
                                             else {
                                                 let obj = {
                                                     name: info.name,
@@ -806,5 +822,46 @@ router.post('/singleuser', (req, res) => {
                 }
             })
     }
+})
+
+
+router.post('/current', (req, res) => {
+    let date = new Date()
+    // user.aggregate([
+    //     // { $match: { _id: new ObjectId(req.body.userid) } },
+    //     {
+    //         $project:
+    //         {
+    //             years:
+    //             {
+    //                 $dateDiff:
+    //                 {
+    //                     startDate: "$created_date",
+    //                     endDate: date,
+    //                     unit: "minute"
+    //                 }
+    //             }
+    //         }
+    //     }
+    // ])
+    user.aggregate([
+        {
+            $project: {
+                Date_diff: {
+                    $dateDiff: {
+                        startDate: "$created_date",
+                        endDate: date,
+                        unit: "day"
+                    }
+                }
+                ,
+                _id: 0
+            }
+        }
+    ])
+        .exec((err, doc) => {
+            if (err) console.log(err)
+            else res.json(doc)
+        })
 })
 module.exports = router
