@@ -85,7 +85,7 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }),(req, r
             category: req.body.category,
             poll: req.body.poll,
             poll_detail: {
-                choice:req.body.choice,
+                choice:req.body.choiceArray,
                 poll_status: true,
                 end_date: end_dat
             }
