@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose')
 
-// const mongoDB = 'mongodb://sda3wear425rwefd:dsadasdassaw23qrefd@79.142.69.107:24813/Askit';
+// const mongoDB = 'mongodb://asdsadasdasds:sadasd12312edasz@79.142.69.107:10000/Askit';
 // const mongoDB = 'mongodb://localhost/Askit' mongodb+srv://Askit:rjGs2fAqPVwXQdH@cluster0.8ddr4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 const mongoDB='mongodb+srv://Askit:rjGs2fAqPVwXQdH@cluster0.8ddr4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 // const mongoDB="mongodb://localhost/Askit"

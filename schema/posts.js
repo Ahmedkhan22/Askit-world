@@ -16,29 +16,20 @@ const PollModel=mongoose.Schema({
         type:Boolean,
         default:false
     },
-    choice1:{
-        type:String
+    choice:{
+        type:[String]
     },
     onfirst:{
         type:float,
         default:0
     },
-    choice2:{
-        type:String
-    },
     onsecond:{
         type:float,
         default:0
     },
-    choice3:{
-        type:String
-    },
     onthird:{
         type:float,
         default:0
-    },
-    choice4:{
-        type:String
     },
     onfourth:{
         type:float,
