@@ -117,7 +117,7 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, 
             poll_detail: {
                 choice: req.body.choiceArray,
                 poll_status: true,
-                end_date: req.body.end_date
+                end_date: end_dat
             }
         }
         post.create(obj, (err, doc) => {
