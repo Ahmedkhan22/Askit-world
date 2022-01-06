@@ -45,6 +45,7 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, 
     data.postby = req.user.id
     let today = new Date()
     let end=req.body.end_date
+    console.log(req.body.end_date);
     var num = end.match(/\d+/g);
     let priorDate = new Date().setDate(today.getDate() + num[0])
     let end_dat = new Date(priorDate)
