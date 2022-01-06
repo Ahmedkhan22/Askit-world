@@ -432,7 +432,8 @@ router.post('/homepage', passport.authenticate('jwt', { session: false }), (req,
                                         endDate: date,
                                         unit: "minute"
                                     }
-                                }
+                                },
+                                _id:0
                             }
                         }
                     ])

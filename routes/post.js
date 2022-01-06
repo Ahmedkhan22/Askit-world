@@ -10,6 +10,35 @@ const passport = require('passport');
 const keys = { secretOrKey: 'secret' }
 //category schema
 const cat = require("../schema/category");
+//for nlp
+const natural = require('natural');
+const aposToLexForm = require('apos-to-lex-form');
+const SpellCorrector = require('spelling-corrector');
+const SW = require('stopword');
+const spellCorrector = new SpellCorrector();
+spellCorrector.loadDictionary();
+router.post('/s-analyzer', function(req, res, next) {
+    const { review } = req.body;
+    const lexedReview = aposToLexForm(review);
+    const casedReview = lexedReview.toLowerCase();
+    const alphaOnlyReview = casedReview.replace(/[^a-zA-Z\s]+/g, '');
+  
+    const { WordTokenizer } = natural;
+    const tokenizer = new WordTokenizer();
+    const tokenizedReview = tokenizer.tokenize(alphaOnlyReview);
+  
+    tokenizedReview.forEach((word, index) => {
+      tokenizedReview[index] = spellCorrector.correct(word);
+    })
+    const filteredReview = SW.removeStopwords(tokenizedReview);
+  
+    const { SentimentAnalyzer, PorterStemmer } = natural;
+    const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn');
+    const analysis = analyzer.getSentiment(filteredReview);
+  
+    res.status(200).json({ analysis });
+  });
+  
 //add a post
 router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, res) => {
     let data = req.body
@@ -48,6 +77,9 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, 
         }
         else {
             data.postby = req.user.id
+            const Categroy = require('../nlp/model');
+            let category=Categroy.classify(`${req.body.question}`)
+            console.log(category);
             post.create(data, (err, doc) => {
                 if (err) res.json(error(err, "poll creation failed"))
                 else {
@@ -85,14 +117,14 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, 
             poll_detail: {
                 choice: req.body.choiceArray,
                 poll_status: true,
-                end_date: end_dat
+                end_date: req.body.end_dat
             }
         }
         post.create(obj, (err, doc) => {
             if (err) res.json(error(err, "poll creation failed"))
             else {
                 doc.category.forEach(element => {
-                    cat.findOneAndUpdate({ name: element }, { $inc: { today_count: 1 } })
+                    cat.updateMany({ name: { $in: data.category } }, { $inc: { today_count: 1 } })
                         .exec((Err, info) => {
                             if (Err) res.json(Err, "cat Categroy not found API error")
                             else {

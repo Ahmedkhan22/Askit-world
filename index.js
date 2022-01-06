@@ -4,8 +4,8 @@ const mongoose = require('mongoose')
 
 // const mongoDB = 'mongodb://asdsadasdasds:sadasd12312edasz@79.142.69.107:10000/Askit';
 // const mongoDB = 'mongodb://localhost/Askit' mongodb+srv://Askit:rjGs2fAqPVwXQdH@cluster0.8ddr4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-const mongoDB='mongodb+srv://Askit:rjGs2fAqPVwXQdH@cluster0.8ddr4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
-// const mongoDB="mongodb://localhost/Askit"
+// const mongoDB='mongodb+srv://Askit:rjGs2fAqPVwXQdH@cluster0.8ddr4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+const mongoDB="mongodb://localhost/Askit"
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 //Get the default connection
 var db = mongoose.connection;
@@ -118,7 +118,7 @@ console.log(file);
 
 //deactivating poll
 const post=require('./schema/posts');
-const Categroy = require('./nlp/model');
+
 const date= new Date()
 // console.log(date);
 cron.schedule('0 59 23 * * *', () => {
@@ -131,8 +131,11 @@ cron.schedule('0 59 23 * * *', () => {
 
 
 
-console.log(Categroy.classify("white lives matter"));
 
+// pratice
+const Categroy = require('./nlp/model');
+let category=Categroy.classify(`Should the media show graphic violence? Why or why not?`)
+console.log(category);
 app.get('/',(req,res)=> res.json("welcome mote"))
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => { console.log(`Server started at port ${PORT}`) })
