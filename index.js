@@ -29,7 +29,6 @@ app.use(passport.initialize());
 // Passport Config
 require('./config/passport')(passport);
 
-
 //creating cron job for refreshing daily trandings 
 const cron = require('node-cron');
 //category schema
