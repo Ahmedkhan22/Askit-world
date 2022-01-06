@@ -4,8 +4,8 @@ const mongoose = require('mongoose')
 
 // const mongoDB = 'mongodb://asdsadasdasds:sadasd12312edasz@79.142.69.107:10000/Askit';
 // const mongoDB = 'mongodb://localhost/Askit' mongodb+srv://Askit:rjGs2fAqPVwXQdH@cluster0.8ddr4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-// const mongoDB='mongodb+srv://Askit:rjGs2fAqPVwXQdH@cluster0.8ddr4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
-const mongoDB="mongodb://localhost/Askit"
+const mongoDB='mongodb+srv://Askit:rjGs2fAqPVwXQdH@cluster0.8ddr4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+// const mongoDB="mongodb://localhost/Askit"
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 //Get the default connection
 var db = mongoose.connection;
