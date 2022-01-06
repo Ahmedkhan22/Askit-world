@@ -406,39 +406,28 @@ router.post('/getinterest', passport.authenticate('jwt', { session: false }), (r
 //home page for user 
 router.post('/homepage', passport.authenticate('jwt', { session: false }), (req, res) => {
     if (req.body.topic !== undefined) {
-        post.aggregate([
-            { $match: { category: req.body.topic } }
-        ])
-            // .populate("postby", "name followers")
-            // .populate('shared_post.$*')
+        post.find(
+            { category: req.body.topic }
+        )
+            .populate("postby", "name followers")
+            .populate('shared_post.$*')
+            .sort({ created_date: -1 })
             .exec((err, doc) => {
                 if (err) res.json(error(err, "error in topic api"))
                 else res.json(Success(doc, "Posts of Treding topic"))
             })
     }
     else {
-        let date = new Date()
         user.findById(req.user.id)
             .exec((Err, info) => {
                 if (Err) res.json(Err)
                 else {
-                    post.aggregate([
-                        { $match: { $or: [{ category: { $in: info.interests } }, { postby: { $in: info.following } }] } }
-                        , {
-                            $project: {
-                                year: {
-                                    $dateDiff: {
-                                        startDate: "$created_date",
-                                        endDate: date,
-                                        unit: "minute"
-                                    }
-                                },
-                                _id:0
-                            }
-                        }
-                    ])
-                        // .populate("postby", "name followers")
-                        // .populate('shared_post.$*')
+                    post.find(
+                        { category: { $in: info.interests } }
+                    )
+                        .populate("postby", "name followers")
+                        .populate('shared_post.$*')
+                        .sort({ created_date: -1 })
                         .exec((err, doc) => {
                             if (err) console.log(error(err, "error in user API"))
                             else res.json(Success(doc, "posts are found"))
