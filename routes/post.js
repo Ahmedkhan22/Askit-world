@@ -17,34 +17,34 @@ const SpellCorrector = require('spelling-corrector');
 const SW = require('stopword');
 const spellCorrector = new SpellCorrector();
 spellCorrector.loadDictionary();
-router.post('/s-analyzer', function(req, res, next) {
+router.post('/s-analyzer', function (req, res, next) {
     const { review } = req.body;
     const lexedReview = aposToLexForm(review);
     const casedReview = lexedReview.toLowerCase();
     const alphaOnlyReview = casedReview.replace(/[^a-zA-Z\s]+/g, '');
-  
+
     const { WordTokenizer } = natural;
     const tokenizer = new WordTokenizer();
     const tokenizedReview = tokenizer.tokenize(alphaOnlyReview);
-  
+
     tokenizedReview.forEach((word, index) => {
-      tokenizedReview[index] = spellCorrector.correct(word);
+        tokenizedReview[index] = spellCorrector.correct(word);
     })
     const filteredReview = SW.removeStopwords(tokenizedReview);
-  
+
     const { SentimentAnalyzer, PorterStemmer } = natural;
     const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn');
     const analysis = analyzer.getSentiment(filteredReview);
-  
+
     res.status(200).json({ analysis });
-  });
-  
+});
+
 //add a post
 router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, res) => {
     let data = req.body
     data.postby = req.user.id
     let today = new Date()
-    let end=req.body.end_date
+    let end = req.body.end_date
     console.log(req.body.end_date);
     var num = end.match(/\d+/g);
     let priorDate = new Date().setDate(today.getDate() + num[0])
@@ -81,7 +81,7 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, 
         else {
             data.postby = req.user.id
             const Categroy = require('../nlp/model');
-            let category=Categroy.classify(`${req.body.question}`)
+            let category = Categroy.classify(`${req.body.question}`)
             console.log(category);
             post.create(data, (err, doc) => {
                 if (err) res.json(error(err, "poll creation failed"))
@@ -91,7 +91,7 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, 
                             if (Err) res.json(error(Err, "cat Categroy not found API error"))
                             else {
                                 if (info !== null) {
-                                    res.json(Success(doc,"Post is shared"))
+                                    res.json(Success(doc, "Post is shared"))
                                 }
                                 else {
                                     const obj = {
@@ -126,27 +126,25 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, 
         post.create(obj, (err, doc) => {
             if (err) res.json(error(err, "poll creation failed"))
             else {
-                doc.category.forEach(element => {
-                    cat.updateMany({ name: { $in: data.category } }, { $inc: { today_count: 1 } })
-                        .exec((Err, info) => {
-                            if (Err) res.json(Err, "cat Categroy not found API error")
-                            else {
-                                if (info !== null) {
-                                    res.json(Success(doc, "Post shared"))
-                                }
-                                else {
-                                    let obj = {
-                                        name: element,
-                                        today_count: 1
-                                    }
-                                    cat.create(obj, (Error, Doc) => {
-                                        if (Error) res.json(error(Error, "cat Categroy not found API error"))
-                                        else res.json(Success(doc, "Post shared"))
-                                    })
-                                }
+                cat.updateMany({ name: { $in: data.category } }, { $inc: { today_count: 1 } })
+                    .exec((Err, info) => {
+                        if (Err) res.json(Err, "cat Categroy not found API error")
+                        else {
+                            if (info !== null) {
+                                res.json(Success(doc, "Post shared"))
                             }
-                        })
-                })
+                            else {
+                                let obj = {
+                                    name: element,
+                                    today_count: 1
+                                }
+                                cat.create(obj, (Error, Doc) => {
+                                    if (Error) res.json(error(Error, "cat Categroy not found API error"))
+                                    else res.json(Success(doc, "Post shared"))
+                                })
+                            }
+                        }
+                    })
             }
         })
     }
