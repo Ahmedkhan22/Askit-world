@@ -46,7 +46,7 @@ router.post('/addpost', passport.authenticate('jwt', { session: false }), (req, 
     let today = new Date()
     let end=req.body.end_date
     var num = end.match(/\d+/g);
-    let priorDate = new Date().setDate(today.getDate() + num)
+    let priorDate = new Date().setDate(today.getDate() + num[0])
     let end_dat = new Date(priorDate)
     if (req.body.poll !== true) {
         if (data.annonymous == true) {
