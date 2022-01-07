@@ -472,7 +472,7 @@ router.post('/follow', (req, res) => {
 require will Top or if latest then require will Lates */
 router.post('/singleuser', passport.authenticate('jwt', { session: false }), (req, res) => {
     let date = new Date()
-    if (req.user.id !== req.body.userid) {
+    if (req.user.id !== req.body.userid && req.body.userid!== undefined) {
         user.findById(req.body.userid, "name address followers following description")
             .exec((Err, info) => {
                 if (Err) console.log(error("sss====", Error))
