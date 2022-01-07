@@ -472,7 +472,7 @@ router.post('/follow', (req, res) => {
 require will Top or if latest then require will Lates */
 router.post('/singleuser', passport.authenticate('jwt', { session: false }), (req, res) => {
     let date = new Date()
-    if (req.user.id !== req.body.userid && req.body.userid!== undefined) {
+    if (req.user.id !== req.body.userid && req.body.userid !== undefined) {
         user.findById(req.body.userid, "name address followers following description")
             .exec((Err, info) => {
                 if (Err) console.log(error("sss====", Error))
@@ -644,7 +644,7 @@ router.post('/singleuser', passport.authenticate('jwt', { session: false }), (re
                 }
             })
     }
-    else  {
+    else {
         user.findById(req.user.id, "name address followers following description")
             .exec((Err, info) => {
                 if (Err) console.log(error("qqqqq", Error))
@@ -749,75 +749,14 @@ router.post('/singleuser', passport.authenticate('jwt', { session: false }), (re
                             .exec((Error, result) => {
                                 if (Error) console.log(error("jjjj", Error))
                                 else {
-                                    user.aggregate([
-                                        { $match: { _id: new ObjectId(req.user.id) } }
-                                        ,
-                                        {
-                                            $project:
-                                            {
-                                                years:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "year"
-                                                    }
-                                                },
-                                                months:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "month"
-                                                    }
-                                                },
-                                                days:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "day"
-                                                    }
-                                                },
-                                                hour:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "hour"
-                                                    }
-                                                },
-                                                minute:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "minute"
-                                                    }
-                                                },
-                                                _id: 0
-                                            }
-                                        }
-                                    ])
-                                        .exec((Er, response) => {
-                                            if (Er) res.json(error(Er, "Error"))
-                                            else {
-                                                let obj = {
-                                                    name: info.name,
-                                                    follower: info.followers.length,
-                                                    following: info.following.length,
-                                                    time_pass_after_joining: response,
-                                                    questions: result.length,
-                                                    posts: result
-                                                }
-                                                res.json(Success(obj, "your profile"))
-                                            }
-                                        })
+                                    let obj = {
+                                        name: info.name,
+                                        follower: info.followers.length,
+                                        following: info.following.length,
+                                        questions: result.length,
+                                        posts: result
+                                    }
+                                    res.json(Success(obj, "your profile"))
                                 }
                             })
                     }
