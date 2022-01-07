@@ -412,9 +412,16 @@ router.post('/homepage', passport.authenticate('jwt', { session: false }), (req,
             .populate("postby", "name followers")
             .populate('shared_post.$*')
             .sort({ created_date: -1 })
-            .exec((err, doc) => {
+            .exec(async(err, doc) => {
                 if (err) res.json(error(err, "error in topic api"))
-                else res.json(Success(doc, "Posts of Treding topic"))
+                else {
+                    // let arr={}
+                    let count =1
+                     let arr=Object.assign({},doc)
+                    setTimeout(() => {
+                        res.json(Success(arr, "Posts of Treding topic"))
+                    }, 2000);
+                }
             })
     }
     else {
