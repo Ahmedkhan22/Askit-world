@@ -481,81 +481,21 @@ router.post('/singleuser', passport.authenticate('jwt', { session: false }), (re
                         post.find({ $and: [{ postby: req.body.userid }, { annonymous: false }] })
                             .sort({ reacts: -1 })
                             .populate("postby", 'name picture')
-                            .populate("shared_post", 'postby text')
+                            .populate("shared_post", 'postby question')
                             .populate("shared_post.postby", 'name picture')
-                            .select('postby shared_post text total_react Comments total_comment total_shares created_date')
+                            .select('postby shared_post question total_react  total_comment total_shares created_date')
                             .exec((Error, result) => {
                                 if (Error) console.log(error("ccccc====", Error))
                                 else {
-                                    user.aggregate([
-                                        { $match: { _id: new ObjectId(req.body.userid) } }
-                                        ,
-                                        {
-                                            $project:
-                                            {
-                                                years:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "year"
-                                                    }
-                                                },
-                                                months:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "month"
-                                                    }
-                                                },
-                                                days:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "day"
-                                                    }
-                                                },
-                                                hour:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "hour"
-                                                    }
-                                                },
-                                                minute:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "minute"
-                                                    }
-                                                },
-                                                _id: 0
-                                            }
-                                        }
-                                    ])
-                                        .exec((Er, response) => {
-                                            if (Er) console.log(error("aaaa=====", Error))
-                                            else {
                                                 let obj = {
                                                     name: info.name,
                                                     follower: info.followers.length,
                                                     following: info.following.length,
-                                                    time_pass_after_joining: response,
                                                     questions: result.length,
                                                     posts: result
                                                 }
                                                 res.json(Success(obj, ""))
-                                            }
-                                        })
+                                           
                                 }
                             })
                     }
@@ -563,81 +503,21 @@ router.post('/singleuser', passport.authenticate('jwt', { session: false }), (re
                         post.find({ $and: [{ postby: req.body.userid }, { annonymous: false }] })
                             .sort({ reacts: 1 })
                             .populate("postby", 'name picture')
-                            .populate("shared_post", 'postby text')
+                            .populate("shared_post", 'postby question')
                             .populate("shared_post.postby", 'name picture')
-                            .select('postby shared_post text total_react Comments total_comment total_shares created_date')
+                            .select('postby shared_post question total_react total_comment total_shares created_date')
                             .exec((Error, result) => {
                                 if (Error) console.log(error("www======", Error))
                                 else {
-                                    user.aggregate([
-                                        { $match: { _id: new ObjectId(req.body.userid) } }
-                                        ,
-                                        {
-                                            $project:
-                                            {
-                                                years:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "year"
-                                                    }
-                                                },
-                                                months:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "month"
-                                                    }
-                                                },
-                                                days:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "day"
-                                                    }
-                                                },
-                                                hour:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "hour"
-                                                    }
-                                                },
-                                                minute:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "minute"
-                                                    }
-                                                },
-                                                _id: 0
-                                            }
-                                        }
-                                    ])
-                                        .exec((Er, response) => {
-                                            if (Er) console.log(error("rrr===", Error))
-                                            else {
                                                 let obj = {
                                                     name: info.name,
                                                     follower: info.followers.length,
                                                     following: info.following.length,
-                                                    time_pass_after_joining: response,
                                                     questions: result.length,
                                                     posts: result
                                                 }
                                                 res.json(Success(obj))
-                                            }
-                                        })
+                                            
                                 }
                             })
                     }
@@ -653,81 +533,20 @@ router.post('/singleuser', passport.authenticate('jwt', { session: false }), (re
                         post.find({ postby: req.user.id })
                             .sort({ reacts: -1 })
                             .populate("postby", 'name picture')
-                            .populate("shared_post", 'postby text')
+                            .populate("shared_post", 'postby question')
                             .populate("shared_post.postby", 'name picture')
-                            .select('postby shared_post annonymous text total_react Comments total_comment total_shares created_date')
+                            .select('postby shared_post  question total_react  total_comment total_shares created_date')
                             .exec((Error, result) => {
                                 if (Error) console.log(error("ttttt", Error))
                                 else {
-                                    user.aggregate([
-                                        { $match: { _id: new ObjectId(req.user.id) } }
-                                        ,
-                                        {
-                                            $project:
-                                            {
-                                                years:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "year"
-                                                    }
-                                                },
-                                                months:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "month"
-                                                    }
-                                                },
-                                                days:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "day"
-                                                    }
-                                                },
-                                                hour:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "hour"
-                                                    }
-                                                },
-                                                minute:
-                                                {
-                                                    $dateDiff:
-                                                    {
-                                                        startDate: "$created_date",
-                                                        endDate: date,
-                                                        unit: "minute"
-                                                    }
-                                                },
-                                                _id: 0
-                                            }
-                                        }
-                                    ])
-                                        .exec((Er, response) => {
-                                            if (Er) console.log(error(Er, "bbbbb"))
-                                            else {
                                                 let obj = {
                                                     name: info.name,
                                                     follower: info.followers.length,
                                                     following: info.following.length,
-                                                    time_pass_after_joining: response,
                                                     questions: result.length,
                                                     posts: result
                                                 }
                                                 res.json(Success(obj, "your profile"))
-                                            }
-                                        })
                                 }
                             })
                     }
@@ -746,7 +565,7 @@ router.post('/singleuser', passport.authenticate('jwt', { session: false }), (re
                                 }
                             })
                             // .populate("shared_post.postby",'name picture')
-                            .select('postby shared_post annonymous text total_react Comments total_comment total_shares created_date')
+                            .select('postby shared_post  question total_react  total_comment total_shares created_date')
                             .exec((Error, result) => {
                                 if (Error) console.log(error("jjjj", Error))
                                 else {
