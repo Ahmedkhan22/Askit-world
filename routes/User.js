@@ -412,12 +412,12 @@ router.post('/homepage', passport.authenticate('jwt', { session: false }), (req,
             .populate("postby", "name followers")
             .populate('shared_post.$*')
             .sort({ created_date: -1 })
-            .exec(async(err, doc) => {
+            .exec(async (err, doc) => {
                 if (err) res.json(error(err, "error in topic api"))
                 else {
                     // let arr={}
-                    let count =1
-                     let arr=Object.assign({},doc)
+                    let count = 1
+                    let arr = Object.assign({}, doc)
                     setTimeout(() => {
                         res.json(Success(arr, "Posts of Treding topic"))
                     }, 2000);
@@ -430,7 +430,7 @@ router.post('/homepage', passport.authenticate('jwt', { session: false }), (req,
                 if (Err) res.json(Err)
                 else {
                     post.find(
-                       {$or: [{ category: { $in: info.interests } },{postby:info._id},{postby:{$in: info.following}}]}
+                        { $or: [{ category: { $in: info.interests } }, { postby: info._id }, { postby: { $in: info.following } }] }
                     )
                         .populate("postby", "name followers")
                         .populate('shared_post.$*')
@@ -438,7 +438,7 @@ router.post('/homepage', passport.authenticate('jwt', { session: false }), (req,
                         .exec((err, doc) => {
                             if (err) console.log(error(err, "error in user API"))
                             else {
-                                let arr=Object.assign({},doc)
+                                let arr = Object.assign({}, doc)
                                 setTimeout(() => {
                                     res.json(Success(arr, "Posts are found"))
                                 }, 2000);
@@ -470,7 +470,7 @@ router.post('/follow', (req, res) => {
 //single user 
 /*if user wants to see top posts of a user or its own top post then
 require will Top or if latest then require will Lates */
-router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req, res) => {
+router.post('/singleuser', passport.authenticate('jwt', { session: false }), (req, res) => {
     let date = new Date()
     if (req.user.id !== req.body.userid) {
         user.findById(req.body.userid, "name address followers following description")
@@ -553,7 +553,7 @@ router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req
                                                     questions: result.length,
                                                     posts: result
                                                 }
-                                                res.json(Success(obj,""))
+                                                res.json(Success(obj, ""))
                                             }
                                         })
                                 }
@@ -644,7 +644,7 @@ router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req
                 }
             })
     }
-    else if (req.user.id ) {
+    else  {
         user.findById(req.user.id, "name address followers following description")
             .exec((Err, info) => {
                 if (Err) console.log(error("qqqqq", Error))
@@ -660,7 +660,7 @@ router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req
                                 if (Error) console.log(error("ttttt", Error))
                                 else {
                                     user.aggregate([
-                                        { $match: { _id: new ObjectId(req.user.id ) } }
+                                        { $match: { _id: new ObjectId(req.user.id) } }
                                         ,
                                         {
                                             $project:
@@ -725,13 +725,13 @@ router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req
                                                     questions: result.length,
                                                     posts: result
                                                 }
-                                                res.json(Success(obj,"your profile"))
+                                                res.json(Success(obj, "your profile"))
                                             }
                                         })
                                 }
                             })
                     }
-                    else if (req.body.require == "Latest") {
+                    else {
                         post.find({ postby: req.user.id })
                             .sort({ reacts: 1 })
                             .populate("postby", 'name picture')
@@ -750,7 +750,7 @@ router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req
                                 if (Error) console.log(error("jjjj", Error))
                                 else {
                                     user.aggregate([
-                                        { $match: { _id: new ObjectId(req.user.id ) } }
+                                        { $match: { _id: new ObjectId(req.user.id) } }
                                         ,
                                         {
                                             $project:
@@ -815,7 +815,7 @@ router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req
                                                     questions: result.length,
                                                     posts: result
                                                 }
-                                                res.json(Success(obj,"your profile"))
+                                                res.json(Success(obj, "your profile"))
                                             }
                                         })
                                 }
