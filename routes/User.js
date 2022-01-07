@@ -805,7 +805,7 @@ router.post('/singleuser', passport.authenticate('jwt', { session: false }), (re
                                         }
                                     ])
                                         .exec((Er, response) => {
-                                            if (Er) console.log(error("llllll", Error))
+                                            if (Er) res.json(error(Er, "Error"))
                                             else {
                                                 let obj = {
                                                     name: info.name,
