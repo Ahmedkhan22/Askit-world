@@ -430,7 +430,7 @@ router.post('/homepage', passport.authenticate('jwt', { session: false }), (req,
                 if (Err) res.json(Err)
                 else {
                     post.find(
-                        { category: { $in: info.interests } }
+                       {$or: [{ category: { $in: info.interests } },{postby:info._id},{postby:{$in: info.following}}]}
                     )
                         .populate("postby", "name followers")
                         .populate('shared_post.$*')
@@ -470,9 +470,9 @@ router.post('/follow', (req, res) => {
 //single user 
 /*if user wants to see top posts of a user or its own top post then
 require will Top or if latest then require will Lates */
-router.post('/singleuser', (req, res) => {
+router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req, res) => {
     let date = new Date()
-    if (req.body.token !== req.body.userid) {
+    if (req.user.id !== req.body.userid) {
         user.findById(req.body.userid, "name address followers following description")
             .exec((Err, info) => {
                 if (Err) console.log(error("sss====", Error))
@@ -553,7 +553,7 @@ router.post('/singleuser', (req, res) => {
                                                     questions: result.length,
                                                     posts: result
                                                 }
-                                                res.json(Success(obj))
+                                                res.json(Success(obj,""))
                                             }
                                         })
                                 }
@@ -644,7 +644,7 @@ router.post('/singleuser', (req, res) => {
                 }
             })
     }
-    else if (req.body.token == req.body.userid) {
+    else if (req.user.id ) {
         user.findById(req.body.userid, "name address followers following description")
             .exec((Err, info) => {
                 if (Err) console.log(error("qqqqq", Error))
@@ -725,7 +725,7 @@ router.post('/singleuser', (req, res) => {
                                                     questions: result.length,
                                                     posts: result
                                                 }
-                                                res.json(Success(obj))
+                                                res.json(Success(obj,"your profile"))
                                             }
                                         })
                                 }
@@ -815,7 +815,7 @@ router.post('/singleuser', (req, res) => {
                                                     questions: result.length,
                                                     posts: result
                                                 }
-                                                res.json(Success(obj))
+                                                res.json(Success(obj,"your profile"))
                                             }
                                         })
                                 }
