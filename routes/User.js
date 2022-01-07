@@ -437,7 +437,12 @@ router.post('/homepage', passport.authenticate('jwt', { session: false }), (req,
                         .sort({ created_date: -1 })
                         .exec((err, doc) => {
                             if (err) console.log(error(err, "error in user API"))
-                            else res.json(Success(doc, "posts are found"))
+                            else {
+                                let arr=Object.assign({},doc)
+                                setTimeout(() => {
+                                    res.json(Success(arr, "Posts are found"))
+                                }, 2000);
+                            }
                         })
                 }
             })
