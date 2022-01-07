@@ -734,6 +734,7 @@ router.post('/singleuser', passport.authenticate('jwt', { session: false }), (re
                     else {
                         post.find({ postby: req.user.id })
                             .sort({ reacts: 1 })
+                            .limit(3)
                             .populate("postby", 'name picture')
                             .populate({
                                 path: 'shared_post',
