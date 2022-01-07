@@ -645,12 +645,12 @@ router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req
             })
     }
     else if (req.user.id ) {
-        user.findById(req.body.userid, "name address followers following description")
+        user.findById(req.user.id, "name address followers following description")
             .exec((Err, info) => {
                 if (Err) console.log(error("qqqqq", Error))
                 else {
                     if (req.body.require == "Top") {
-                        post.find({ postby: req.body.userid })
+                        post.find({ postby: req.user.id })
                             .sort({ reacts: -1 })
                             .populate("postby", 'name picture')
                             .populate("shared_post", 'postby text')
@@ -660,7 +660,7 @@ router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req
                                 if (Error) console.log(error("ttttt", Error))
                                 else {
                                     user.aggregate([
-                                        { $match: { _id: new ObjectId(req.body.userid) } }
+                                        { $match: { _id: new ObjectId(req.user.id ) } }
                                         ,
                                         {
                                             $project:
@@ -732,7 +732,7 @@ router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req
                             })
                     }
                     else if (req.body.require == "Latest") {
-                        post.find({ postby: req.body.userid })
+                        post.find({ postby: req.user.id })
                             .sort({ reacts: 1 })
                             .populate("postby", 'name picture')
                             .populate({
@@ -750,7 +750,7 @@ router.post('/singleuser',passport.authenticate('jwt', { session: false }), (req
                                 if (Error) console.log(error("jjjj", Error))
                                 else {
                                     user.aggregate([
-                                        { $match: { _id: new ObjectId(req.body.userid) } }
+                                        { $match: { _id: new ObjectId(req.user.id ) } }
                                         ,
                                         {
                                             $project:
